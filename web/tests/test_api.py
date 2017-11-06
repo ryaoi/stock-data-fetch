@@ -14,5 +14,10 @@ def test_mkdir_if_not_exist(m_mkdir):
     m_mkdir.assert_called_with(dir_path)
 
 
+@mock.patch(api.__name__ + ".HOME_DIR", TEST_DIR)
 class DataReaderTest(TestCase):
-    pass
+
+    def test_cache_dir(self):
+        reader = api.DataReader()
+        expected = path.join(TEST_DIR, "stock-data")
+        self.assertEqual(reader.cache_dir, expected)
