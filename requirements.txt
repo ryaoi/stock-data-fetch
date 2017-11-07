@@ -1,4 +1,5 @@
 pandas_datareader==0.5.0
+pandas
 pep8
 nose
 mock

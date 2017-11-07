@@ -17,13 +17,13 @@ class DataReader(object):
         self.cache_dir = cache_dir or path.join(HOME_DIR, "stock-data")
         mkdir_if_not_exist(self.cache_dir)
 
-    def read(self, ticker, source, end=None):
+    def read(self, ticker, source="yahoo", end=None):
         end = end or datetime.now().date()
         filename = path.join(self.cache_dir, ticker + ".csv")
-        df = web.DataReader(ticker, source, self.start, end)
+        df = web.DataReader(ticker, source, start=self.start, end=end)
         df.to_csv(filename, header=True)
         return df
 
 
-def data_reader(ticker, source, end=None):
+def data_reader(ticker, source="yahoo", end=None):
     return DataReader().read(ticker, source, end)
