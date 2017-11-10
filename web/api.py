@@ -29,6 +29,7 @@ def get_rt_df_from_google(ticker):
         df = pd.DataFrame(data, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
         df.index = df['Date']
         del df['Date']
+        print(df)
         return (df)
     else:
         print("Couldnt retrieve the live_prince from finance.google.com"
@@ -80,11 +81,10 @@ class DataReader(object):
                 df_tmp = df.loc[J.strftime("%Y-%m-%d"):].reset_index()                # The Raw data to concatenate with the reference
                 df_ret = df_ret.append(df_tmp, ignore_index=True)                     # Append the raw data to the reference
                 df_rt_price = get_rt_df_from_google(ticker)                           # Get a Dataframe from finance.google.com
-
-                if "Adj Close" in df:                                                 # if "Adj Close" is in the Raw dataframe
+                if 'Adj Close' in df_ret.columns and 'Adj Close' in df:               # if "Adj Close" is in the Referenced dataframe and the raw
                     df.reset_index(inplace=True)
                     df_ret["Adj Close"] = df["Adj Close"]                             # Renew the reference data with Raw data
-                else:                                                                 # Otherwise delete the 'Adj Close' column of the new Dataframe
+                elif 'Adj Close' not in df_ret:                                       # Otherwise delete the 'Adj Close' column of the new Dataframe
                     del df_rt_price['Adj Close']
                 df_rt_price = df_rt_price.reset_index()
                 if not df_rt_price.empty:                                             # if df from get_rt_live_price is not None
