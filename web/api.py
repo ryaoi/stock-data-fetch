@@ -29,7 +29,6 @@ def get_rt_df_from_google(ticker):
         df = pd.DataFrame(data, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
         df.index = df['Date']
         del df['Date']
-        print(df)
         return (df)
     else:
         print("Couldnt retrieve the live_prince from finance.google.com"
