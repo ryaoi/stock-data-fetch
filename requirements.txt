@@ -7,3 +7,4 @@ jupyter
 pep8
 radon
 coverage
+tenacity

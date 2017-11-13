@@ -4,6 +4,7 @@ import pandas_datareader.data as web
 import pandas as pd
 import json
 import requests
+from tenacity import retry, stop_after_attempt
 
 HOME_DIR = path.expanduser("~")
 
@@ -41,6 +42,16 @@ def mkdir_if_not_exist(dir_path):
         mkdir(dir_path)
 
 
+@retry(stop=(stop_after_attempt(5)))
+def get_df_from_datareader(ticker, source, start, end):
+    try:
+        df = web.DataReader(ticker, source, start, end)
+        return df
+    except:
+        print("[-]Error: Could not read the URL.\nRetrying...")
+        raise Exception
+
+
 class DataReader(object):
     start = "1926-01-01"
 
@@ -53,12 +64,11 @@ class DataReader(object):
             end = datetime.strftime(date.today(), '%Y-%m-%d')
         filename = path.join(self.cache_dir, ticker + ".csv")                         # filename = ticker.csv
         try:
-            df = web.DataReader(ticker, source, start=self.start, end=end)            # Fetch the dataframe
-        except Exception as e:
-            print(("Can't retrieve the specified Data:ticker:"
-                  "%s - source:%s" % (ticker, source)))
-            print("[-]Error:" + str(e))
-            return None                                                               # Return None
+            df = get_df_from_datareader(ticker, source, start=self.start, end=end)        # Fetch the dataframe
+        except:
+            print("Could not retrieve the specified Dataframe")
+            print("ticker:[%s]\tsource:[%s]" % (ticker, source))
+            return None
         if not path.isfile(filename):                                                 # If it's the first time fetching the data
             df.to_csv(filename, header=True)                                          # Save it to ticker.csv as a reference
             return df                                                                 # Return the dataframe that we saved
