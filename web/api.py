@@ -20,12 +20,12 @@ def get_rt_df_from_google(ticker):
     if rsp.status_code in (200,):
         fin_data = json.loads(rsp.content[6:-2].decode('unicode_escape'))
         data = {'Date': [date.today()],
-                'Open': [float(fin_data['op'].replace(",", ""))] if fin_data['op'] is not None else float(-1),
-                'High': [float(fin_data['hi'].replace(",", ""))] if fin_data['hi'] is not None else float(-1),
-                'Low': [float(fin_data['lo'].replace(",", ""))] if fin_data['lo'] is not None else float(-1),
-                'Close': [float(fin_data['l'].replace(",", ""))] if fin_data['l'] is not None else float(-1),
-                'Adj Close': [float(fin_data['l'].replace(",", ""))] if fin_data['l'] is not None else float(-1),
-                'Volume': [int(float(M_to_digit(fin_data['vo'].replace(",", ""))))] if fin_data['vo'] is not None else -1}
+                'Open': [float(fin_data['op'].replace(",", ""))] if len(fin_data['op']) is not 0 else float(-1),
+                'High': [float(fin_data['hi'].replace(",", ""))] if len(fin_data['hi']) is not 0 else float(-1),
+                'Low': [float(fin_data['lo'].replace(",", ""))] if len(fin_data['lo']) is not 0 else float(-1),
+                'Close': [float(fin_data['l'].replace(",", ""))] if len(fin_data['l']) is not 0 else float(-1),
+                'Adj Close': [float(fin_data['l'].replace(",", ""))] if len(fin_data['l']) is not 0 else float(-1),
+                'Volume': [int(float(M_to_digit(fin_data['vo'].replace(",", ""))))] if len(fin_data['vo']) is not 0 else -1}
         df = pd.DataFrame(data, columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
         df.index = df['Date']
         del df['Date']
