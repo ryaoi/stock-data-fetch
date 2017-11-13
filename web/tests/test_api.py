@@ -50,6 +50,39 @@ class DataReaderTest(TestCase):
         expected = web_reader(ticker)
         pdt.assert_frame_equal(df, expected)
 
+    def test_different_type_of_source(self):
+        """
+        From pandas-datareader Documentation
+        Supported Sources with `pandas_datareader.data_reader` are:
+        - Yahoo! Finance                   [Yes]
+        - Google Finance                   [Yes]
+        - Enigma                           [Nope]
+        - Quandl                           [Yes]
+        - St.Louis FED(RFED)               [Yes]
+        - Kenneth French's data library    [Yes]
+        - World Bank                       [No]
+        - OECD                             [Yes]
+        - Eurostat                         [Yes]
+        - Thrifts Saving plan              [No]
+        - Nasdaq Trader symbol definitions [No]
+        """
+        df = api.data_reader("F", "yahoo")                # Can Retrieve
+        df = api.data_reader("F", "google")               # Can Retrieve
+        df = api.data_reader("WIKI/AAPL", "quandl")
+        df = api.data_reader("GDP", "fred")               # Can Retrieve
+        df = api.data_reader("5_Industry_Portfolios", "famafrench") # data_reader doesn't return a dataframe, it returns a dict
+        df = api.data_reader('UN_DEN', 'oecd')             # Can't retrieve 
+        df = api.data_reader("tran_sf_railac", 'eurostat') # Can't retrieve
+
+    def test_ticker_goog_different_source(self):
+        df = api.data_reader("GOOG", "yahoo")              # OK
+        df = api.data_reader("GOOG", "google")             # OK
+        df = api.data_reader("GOOG", "quandl")             # OK (not updated)
+        df = api.data_reader("GOOG", "fred")               # No
+        df = api.data_reader("GOOG", "famafrench")         # No
+        df = api.data_reader("GOOG", 'oecd')               # No
+        df = api.data_reader('GOOG', 'eurostat')           # No
+
     @classmethod
     def tearDownClass(cls):
         rmtree(cls.stock_data_dir)
