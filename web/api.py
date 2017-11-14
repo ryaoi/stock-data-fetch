@@ -99,6 +99,7 @@ class DataReader(object):
                 if not df_rt_price.empty:                                             # if df from get_rt_live_price is not None
                     df_ret = df_ret.append(df_rt_price, ignore_index=True)            # Append our reference data with the df from get_rt_live_price
                 df_ret['Date'] = pd.to_datetime(df_ret['Date'], format="%Y-%m-%d")    # Adjust the Time Format
+                df_ret = df_ret.sort_values('Date')
                 df_ret.index = df_ret['Date']                                         # Set Index to Date
                 del df_ret['Date']                                                    # Delete "Date" Column from the dataframe
                 df_ret.to_csv(filename, header=True)                                  # Save the new reference data
